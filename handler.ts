@@ -1,6 +1,12 @@
 import * as express from "express";
 import * as utils from '@core/utils';
-import {Error} from "@core/errors";;
+import {
+    conf
+} from '@core/conf';
+import {
+    Error
+} from "@core/errors";;
+
 import path = require("path");
 export const name = "admin" //name of The renderer
 export const router = express.Router();
@@ -19,23 +25,24 @@ router.use((req, res, next) => {
     req["handlername"] = "admin"; // Set the handler Name
     next();
 })
-router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"],async  (req, res) => {
+router.get("/admin/getmodules", async (req, res) => {
+     res.json({
+        "modules": Object.keys(conf["skeletons"])
+    });
+});
+router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"], async (req, res) => {
     const user = await utils.getCurrentUser();
-    if(user)
-    {
-        if(user["access"].indexOf("root")>-1)
-        {
-            res.sendFile(path.join(__dirname+"/views/index.html"));
-        }
-        else
-        {
+    if (user) {
+        if (user["access"].indexOf("root") > -1) {
+            res.sendFile(path.join(__dirname + "/views/index.html"));
+        } else {
             console.log("no acces");
             res.end("401");
-            
+
         }
-       
+
     }
-    
+
 });
 
 
@@ -58,7 +65,7 @@ function render({
 
     } else {
         console.log("send ??");
-        
+
         res.render(template, {
             layout: false,
             skel: skel

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = exports.name = void 0;
 const express = require("express");
 const utils = require("@core/utils");
+const conf_1 = require("@core/conf");
 ;
 const path = require("path");
 exports.name = "admin"; //name of The renderer
@@ -20,6 +21,11 @@ exports.router.use(express.json());
 exports.router.use((req, res, next) => {
     req["handlername"] = "admin"; // Set the handler Name
     next();
+});
+exports.router.get("/admin/getmodules", async (req, res) => {
+    res.json({
+        "modules": Object.keys(conf_1.conf["skeletons"])
+    });
 });
 exports.router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"], async (req, res) => {
     const user = await utils.getCurrentUser();
