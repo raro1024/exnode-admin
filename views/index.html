@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head> 
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="/admin/static/js/admin.js"></script>
+        <script src="/admin/static/js/edit.js"></script>
+        <script src="/admin/static/js/bones/bone.js"></script>
+        <script src="/admin/static/js/bones/stringBone.js"></script>
+        <script src="/admin/static/js/bones/dateBone.js"></script>
         <link rel="stylesheet" href="/admin/static/css/style.css"></link>
     </head>
     <body>
         <div class="container">
         <div class="sidebar item" id="skelname-sidebar"></div>
-         <div class="body-content">
-         <table class="styled-table">
+         <div class="body-content" id = "body-content">
+         <table class="styled-table" id="module-list">
             <thead>
                 <tr id="table-head">
                   

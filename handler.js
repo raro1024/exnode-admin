@@ -29,6 +29,7 @@ exports.router.get("/admin/getmodules", async (req, res) => {
 });
 exports.router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"], async (req, res) => {
     const user = await utils.getCurrentUser();
+    console.log(user);
     if (user) {
         if (user["access"].indexOf("root") > -1) {
             res.sendFile(path.join(__dirname + "/views/index.html"));
@@ -37,6 +38,10 @@ exports.router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '
             console.log("no acces");
             res.end("401");
         }
+    }
+    else {
+        console.log("no acces");
+        res.end("401");
     }
 });
 function render({ template = "index.hbs", skel = {}, statusCode = 200, res = null } = {}) {

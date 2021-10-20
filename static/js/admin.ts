@@ -1,4 +1,11 @@
+
+
 //load all skelnames form the server and show it in side bar
+document.addEventListener("DOMContentLoaded",()=>{
+    customElements.define('edit-module', EditModule);
+})
+
+var moduleStructure=[];
 fetch("/admin/getmodules").then((resp) => {
     resp.json().then(data => {
         console.log(data);
@@ -30,20 +37,52 @@ async function getModuleData(moduleName) {
         bones.push(s);
         head.appendChild(element);
     }
+    moduleStructure=data["structure"];
     //Prepare Table Body
     var body = document.getElementById("table-body");
     body.innerHTML = "";
     for (let i in data["values"]) {
         var tr = document.createElement("tr");
+        tr.addEventListener("click", (event) => {
+            getSkelData(moduleName,data["values"][i]);
+        })
         for (let b of bones) {
             let td = document.createElement("td");
-            td.textContent = data["values"][i][b];
+            if(data["structure"][b]["type"]=="file")
+            {
+                td.textContent = data["values"][i][b][data["structure"][b]["viewString"]];
+            }
+            else
+            {
+                td.textContent = data["values"][i][b];
+            }
+            
             tr.appendChild(td);
 
         }
         body.appendChild(tr);
+        
     }
 }
 async function listModuleData(moduleName) {
     return fetch(`/json/${moduleName}/list`).then(resp => resp.json())
+}
+function getSkelData(moduleName,data)
+{
+    console.log("key=>"+data.key);
+    var table = document.getElementById("module-list");//hidde table
+    table.hidden=true;
+    //Start to cerate edit form
+    console.log(data);
+    console.log(moduleStructure);
+    var body_content =document.getElementById("body-content");
+    var editForm = document.createElement("edit-module") as EditModule;
+    editForm.data=data;
+    editForm.structure=moduleStructure;
+    editForm.moduleName=moduleName;
+    editForm.render();
+    body_content.appendChild(editForm);
+    
+
+
 }

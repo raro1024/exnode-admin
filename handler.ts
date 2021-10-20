@@ -8,6 +8,7 @@ import {
 } from "@core/errors";;
 
 import path = require("path");
+import { cp } from "fs";
 export const name = "admin" //name of The renderer
 export const router = express.Router();
 
@@ -32,6 +33,7 @@ router.get("/admin/getmodules", async (req, res) => {
 });
 router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"], async (req, res) => {
     const user = await utils.getCurrentUser();
+    console.log(user);
     if (user) {
         if (user["access"].indexOf("root") > -1) {
             res.sendFile(path.join(__dirname + "/views/index.html"));
@@ -41,6 +43,11 @@ router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:
 
         }
 
+    }
+    else
+    {
+        console.log("no acces");
+        res.end("401");
     }
 
 });
