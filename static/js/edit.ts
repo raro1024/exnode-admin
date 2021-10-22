@@ -1,6 +1,7 @@
 class EditModule extends HTMLElement {
     moduleData: any;
     moduleStructure: any;
+    _moduleName:any;
     root: ShadowRoot;
     constructor() {
 
@@ -47,7 +48,7 @@ class EditModule extends HTMLElement {
     {
         for (const boneName in this.moduleStructure) {
             const boneStructure = this.moduleStructure[boneName];
-            const boneData = this.moduleData[boneName];
+            const boneData =this.moduleData?this.moduleData[boneName]:this.moduleStructure[boneName]._value;
             var boneForm;
             switch (boneStructure.type) {
                 case "string":
@@ -58,6 +59,13 @@ class EditModule extends HTMLElement {
                     boneForm = new dateBone(boneStructure, boneData);
                     this.root.appendChild(boneForm.renderer(boneName));
                     break;
+                case "numeric":
+                    boneForm = new numericBone(boneStructure, boneData);
+                    this.root.appendChild(boneForm.renderer(boneName));
+                    break;
+                case "file":
+                    boneForm = new fileBone(boneStructure, boneData);
+                    this.root.appendChild(boneForm.renderer(boneName));
             }
 
         }
@@ -79,7 +87,11 @@ class EditModule extends HTMLElement {
                 'Content-Type':"application/json"
             }
         }).then(res => {
-            console.log(res)
+            this.closeForm();
         });
+    }
+    closeForm()
+    {
+
     }
 }
