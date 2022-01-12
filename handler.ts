@@ -5,7 +5,11 @@ import {
 } from '@core/conf';
 import {
     Error
-} from "@core/errors";;
+} from "@core/errors";
+import {
+    User
+} from "@core/modules/user";;
+
 
 import path = require("path");
 export const name = "admin" //name of The renderer
@@ -30,26 +34,44 @@ router.get("/admin/getmodules", async (req, res) => {
         "modules": Object.keys(conf["skeletons"])
     });
 });
+router.post("/admin/login/", async (req, res) => {
+    console.log("Login in admin");
+    if( await new User().verify(utils.getParams(req)))
+    {
+        res.sendFile(path.join(__dirname + "/views/index.html"));
+    }
+    else
+    {
+        console.log("User not found or Wrong PW");
+        res.sendFile(path.join(__dirname + "/views/login.html"));
+    }
+   
+
+})
 router.all(['/admin/:module/:handler/:key', '/admin/:module/:handler', '/admin/:module/', "/admin*"], async (req, res) => {
+  
     const user = await utils.getCurrentUser();
     console.log(user);
     if (user) {
         if (user["access"].indexOf("root") > -1) {
             res.sendFile(path.join(__dirname + "/views/index.html"));
         } else {
-            console.log("no acces");
+            console.log("no acces?>");
             res.end("401");
 
         }
 
     }
-    else
+    else // No User we render the login page
     {
-        console.log("no acces");
-        res.end("401");
+        console.log("no acces / no user");
+        res.sendFile(path.join(__dirname + "/views/login.html"));
+        //res.end("200");
+
     }
 
 });
+
 
 
 function render({

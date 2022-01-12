@@ -29,7 +29,7 @@ fetch("/admin/getmodules").then((resp) => {
                     resp.json().then((moduleStructure)=>{
                         console.log("get by key")
                         console.log( urlParams.get("module"),moduleStructure)
-                        createEditForm( urlParams.get("module"),moduleStructure);
+                        createEditForm( urlParams.get("module"),urlParams.get("key"),moduleStructure);
 
                 }));
             } else {
@@ -65,10 +65,10 @@ function getSkelData(moduleName,moduleStructure, data) {
     table.hidden = true;
     //Start to cerate edit form
     urlSetter(moduleName,data.key)
-    createEditForm(moduleName,moduleStructure,data);
+    createEditForm(moduleName,moduleStructure,data.key,data);
     
 }
-function createEditForm(name,structure,data=undefined)
+function createEditForm(name,structure,key,data=undefined)
 {
     var body_content = document.getElementById("body-content");
     body_content.innerHTML="";
@@ -76,6 +76,7 @@ function createEditForm(name,structure,data=undefined)
     editForm.data = data;
     editForm.structure = structure;
     editForm.moduleName = name;
+    editForm.key = key;
     editForm.render();
     editForm.closeForm=()=>{
         clearBodyContent();

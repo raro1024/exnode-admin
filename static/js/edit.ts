@@ -1,12 +1,13 @@
 class EditModule extends HTMLElement {
     moduleData: any;
     moduleStructure: any;
-    _moduleName:any;
+    _moduleName: any;
     root: ShadowRoot;
+    _key: any;
     constructor() {
 
         super();
-        console.log("constructor called")
+        this._key;
         this.root = this.attachShadow({
             mode: 'open'
         });
@@ -18,10 +19,19 @@ class EditModule extends HTMLElement {
         this.root.appendChild(sendBtn);
 
     }
+    get key()
+    {
+        return this._key;
+    }
+    set key(key)
+    {
+        this._key=key;
+    }
     get data() {
         return this.moduleData;
     }
     set data(moduleData) {
+        if(!moduleData)return; //Leave Function instantly 
         console.log("set data =>");
         console.log(moduleData);
         this.moduleData = moduleData;
@@ -48,50 +58,48 @@ class EditModule extends HTMLElement {
     {
         for (const boneName in this.moduleStructure) {
             const boneStructure = this.moduleStructure[boneName];
-            const boneData =this.moduleData?this.moduleData[boneName]:this.moduleStructure[boneName]._value;
+            const boneData = this.moduleData ? this.moduleData[boneName] : this.moduleStructure[boneName]._value;
             var boneForm;
             switch (boneStructure.type) {
                 case "string":
                     boneForm = new stringBone(boneStructure, boneData);
-                    this.root.appendChild(boneForm.renderer(boneName));
                     break;
                 case "date":
                     boneForm = new dateBone(boneStructure, boneData);
-                    this.root.appendChild(boneForm.renderer(boneName));
+
                     break;
                 case "numeric":
                     boneForm = new numericBone(boneStructure, boneData);
-                    this.root.appendChild(boneForm.renderer(boneName));
                     break;
                 case "file":
                     boneForm = new fileBone(boneStructure, boneData);
-                    this.root.appendChild(boneForm.renderer(boneName));
+                    break;
+
             }
+            this.root.appendChild(boneForm.renderer(boneName));
 
         }
 
     }
     sendData() {
         console.log("send data");
-        const data ={}
+        const data = {}
         this.root.querySelectorAll("input").forEach((inputElement) => {
             console.log(inputElement);
-            data[inputElement.name]= inputElement.value;
-            
+            data[inputElement.name] = inputElement.value;
+
         });
-        fetch(`/json/${this.moduleName}/edit/${this.data.key}`, {
+        fetch(`/json/${this.moduleName}/edit/${this.key}`, {
             method: 'post',
             body: JSON.stringify(data),
-            headers:
-            {
-                'Content-Type':"application/json"
+            headers: {
+                'Content-Type': "application/json"
             }
         }).then(res => {
             this.closeForm();
         });
     }
-    closeForm()
-    {
+    closeForm() {
 
     }
 }
